@@ -1,15 +1,26 @@
-import Image from "./Image";
-import { ButtonGroup } from "@mui/material";
-import { useContext, useEffect, useState } from "react";
-// import ShopButton from "./ShopButton/ShopButton";
-import { productActions } from "../globals/globals";
-import { ToastOptions, toast } from "react-toastify";
-import { StateContext, defaultCart, dev, dismissAlert, showAlert } from "../pages/_app";
-import { checkRole, liveLink, maxAnimationTime, productPlaceholderImage, shortAnimationTime } from "../firebase";
+import Image from './Image';
+import { ButtonGroup } from '@mui/material';
+import { productActions } from '../globals/globals';
+// import ShopButton from './ShopButton/ShopButton';
+import { ToastOptions, toast } from 'react-toastify';
+import { useContext, useEffect, useState } from 'react';
+import { StateContext, defaultCart, dev, dismissAlert, showAlert } from '../pages/_app';
+import { checkRole, liveLink, maxAnimationTime, productPlaceholderImage, shortAnimationTime } from '../firebase';
 
 export default function Product(props) {
     let { product, filteredProducts, inCart } = props;
-    let { user, router, products, setProducts, cart, setCart, adminFeatures, setImageURLAdded, productToEdit, setProductToEdit } = useContext<any>(StateContext);
+    let { 
+        user,
+        cart,
+        router,
+        setCart,
+        products,
+        setProducts,
+        adminFeatures,
+        productToEdit,
+        setProductToEdit, 
+        setImageURLAdded,
+    } = useContext<any>(StateContext);
 
     if (!filteredProducts) filteredProducts = products;
 
@@ -23,7 +34,7 @@ export default function Product(props) {
 
     let [options, setOptions] = useState(product.options.reduce((acc, {name, values}) => Object.assign(acc, {[name]: values[0]}), {
         Quantity: product.variantID ? product.selectedOptions.Quantity : 1,
-        Price: product.variantID ? (product.price * product.selectedOptions.Quantity).toFixed(2) : product.price,
+        Price: product.variantID ? (product?.price * product.selectedOptions.Quantity).toFixed(2) : product?.price,
     }));
 
     const isCartButtonDisabled = () => {
@@ -320,6 +331,10 @@ export default function Product(props) {
             addToCart();
         }
     }
+
+    useEffect(() => {
+        setOptions(prevOptions => ({ ...prevOptions, Price: product?.price }))
+    }, [products])
 
     useEffect(() => {
         if (product.variantID) {
